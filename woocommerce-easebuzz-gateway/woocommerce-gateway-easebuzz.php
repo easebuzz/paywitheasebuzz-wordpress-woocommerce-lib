@@ -270,7 +270,7 @@ function woocommerce_gateway_payeasebuzz_init() {
                 return '<script type="text/javascript">
                     jQuery(function(){
                     jQuery("body").block({
-                            message: "'.__('Oops, Server error, Please try again.', 'woo_payeasebuzz').'",
+                            message: "'.__('Oops, Server error, Please try again. '.$response["data"], 'woo_payeasebuzz').'",
                             overlayCSS: {
                                 background	: "#fff",
                                 opacity	: 0.6
@@ -341,7 +341,7 @@ function woocommerce_gateway_payeasebuzz_init() {
                                     if($status=="success"){
                                             $trans_authorised = true;
                                             $this->msg['message'] = "Thank you for shopping with us. Your account has been charged and your transaction is successful.";
-                                            $this->msg['class'] = 'woocommerce-message';
+                                            $this->msg['class'] = 'success';
                                             if($order->status == 'processing'){
                                                 $order->add_order_note('Easebuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
                                             }else{
@@ -353,13 +353,13 @@ function woocommerce_gateway_payeasebuzz_init() {
                                     }else if($status=="pending"){
                                             $trans_authorised = true;
                                             $this->msg['message'] = "Thank you for shopping with us. Right now your payment status is pending. We will keep you posted regarding the status of your order through eMail";
-                                            $this->msg['class'] = 'woocommerce-info';
+                                            $this->msg['class'] = 'success';
                                             $order->add_order_note('Easebuzz payment status is pending<br/>Easebuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
                                             $order->update_status('on-hold');
                                             $woocommerce -> cart -> empty_cart();
                                     }else{
-                                            $this->msg['class'] = 'woocommerce-error';
-                                            $this->msg['message'] = "Thank you for shopping with us. However, the transaction has been declined.";
+                                            $this->msg['class'] = 'error';
+                                            $this->msg['message'] = "Oops, the transaction has been failed. Please try again";
                                             $order->add_order_note('Transaction ERROR: '.$_REQUEST['error'].'<br/>Easebuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
                                     }
                                 }else{
@@ -370,6 +370,19 @@ function woocommerce_gateway_payeasebuzz_init() {
                                 if($trans_authorised==false){
                                         $order->update_status('failed');
                                 }
+                            }
+                            if ( function_exists( 'wc_add_notice' ) )
+                            {
+                                    wc_add_notice( $this->msg['message'], $this->msg['class'] );
+                            }
+                            else 
+                            {
+                                    if($this->msg['class']=='success'){
+                                            $woocommerce->add_message( $this->msg['message']);
+                                    }else{
+                                            $woocommerce->add_error( $this->msg['message'] );
+                                    }
+                                    $woocommerce->set_messages();
                             }
                         }catch(Exception $e){
                             // $errorOccurred = true;
