@@ -90,7 +90,7 @@ function woocommerce_gateway_payeasebuzz_init() {
                 'title' => array(
                     'title' => __('Title:', 'woo_payeasebuzz'),
                     'type' => 'text',
-                    'default' => __('Pay with Easebuzz', 'woo_payeasebuzz'),
+                    'default' => __('Pay Online (Upto 50% returns)', 'woo_payeasebuzz'),
                     'description' => __('This controls the title which the user sees during checkout.', 'woo_payeasebuzz'),
                     'desc_tip' => true
                 ),
