@@ -28,7 +28,7 @@ function woocommerce_gateway_payeasebuzz_init() {
             
             
             $this->id = 'payeasebuzz'; // ID for WC to associate the gateway values
-            $this->method_title = 'Easebuzz getway'; // Gateway Title as seen in Admin Dashboad
+            $this->method_title = 'Easebuzz gateway'; // Gateway Title as seen in Admin Dashboad
             $this->method_description = 'Pay with Easebuzz - Redefining Payments'; // Gateway Description as seen in Admin Dashboad
             $this->has_fields = false; // Inform WC if any fileds have to be displayed to the visitor in Frontend 
 
@@ -343,7 +343,8 @@ function woocommerce_gateway_payeasebuzz_init() {
                                             $this->msg['message'] = "Thank you for shopping with us. Your account has been charged and your transaction is successful.";
                                             $this->msg['class'] = 'success';
                                             if($order->status == 'processing'){
-                                                $order->add_order_note('Easebuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
+                                                $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
+                                                $woocommerce->cart->empty_cart();
                                             }else{
                                                 $order->payment_complete();
                                                 $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
