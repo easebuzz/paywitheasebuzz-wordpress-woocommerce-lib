@@ -159,9 +159,21 @@ class Payment {
                         return array ( 'status' => Misc::FAILURE, 
                             'data' => $result['error'] );
                     }else{
+                        
+                        $table=get_option('woocommerce_payeasebuzz_settings');
+                        if($table['enable_iframe']=='yes'){
+                            //iframe code need to enter here  @ anurag
+                            return array (
+                                'status' => Misc::IFRAME, 
+                                'data' => array('access_key'=>$transaction_id , 'key'=>$table['key_id'])
+                             );
+                        }
+                        else{
+
                         return array ( 
                             'status' => Misc::SUCCESS, 
                             'data' => $this->url . 'pay/' . $transaction_id );
+                        }
                     }				
             } else {
                     return array ( 'status' => Misc::FAILURE, 'data' => $error );
@@ -194,7 +206,7 @@ class Misc {
 	
 	const SUCCESS = 1;
 	const FAILURE = 0;
-
+    const IFRAME ='iframe';
 	public static function get_hash ( $params, $salt )
 	{
             $posted = array ();
