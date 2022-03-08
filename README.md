@@ -3,9 +3,10 @@ woocommerce integration plugin for pay with easebuzz pay.easebuzz.in
  
 ## steps:
 
-1. Unzip the Easebuzz plugin
-2. You will see "woocommerce-easebuzz-gateway" folder and put that in "wp-content/plugins/" directory 
-3. from wordpress admin panel,go to "Plugin -> installed plugins" and Activate "Easebuzz Gateway" plugin it..
-4. Go to woocommerce -> settings -> checkout -> Easebuzz Gateway 
-5. enable plugin 
-6. provide Key, Salt, mode and enable/disable iframe.
+1. Download paywitheasebuzz-wordpress-woocommerce-lib-master from below link.
+2. Extract [woocommerce-easebuzz-gateway.zip](https://github.com/easebuzz/paywitheasebuzz-wordpress-woocommerce-lib/blob/master/woocommerce-easebuzz-gateway.zip) from master folder.
+3. Login to admin.
+4. Install [woocommerce-easebuzz-gateway.zip](https://github.com/easebuzz/paywitheasebuzz-wordpress-woocommerce-lib/blob/master/woocommerce-easebuzz-gateway.zip) in the plugins.
+5. Go to  installed plugins.
+6. Enable Easebuzz.
+7. Add Key, Salt and Environment. (Keep SURL & FURL "Checkout" page).
