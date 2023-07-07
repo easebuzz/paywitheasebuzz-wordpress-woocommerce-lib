@@ -10,3 +10,5 @@ woocommerce integration plugin for pay with easebuzz pay.easebuzz.in
 5. Go to  installed plugins.
 6. Enable Easebuzz.
 7. Add Key, Salt and Environment. (Keep SURL & FURL "Checkout" page).
+8. For webhook response add webhook.php file path in merchant dashboard.
+   Example : https://wordpress.easebuzz.in/wp-content/plugins/woocommerce_easebuzz_plugin/webhook.php

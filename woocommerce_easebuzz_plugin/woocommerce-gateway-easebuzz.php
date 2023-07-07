@@ -238,9 +238,8 @@
                     
                     $arr = explode(",",$OriginalString);
                     $udf = array();
-                    $i = count($arr);
-                    for($a = 0;$a<$i; $a++){
-                        $udf[$a] = $arr[$a];
+                    for($a = 0;$a<6; $a++){
+                        $udf[$a] = $arr[$a]."";
                     }
 
                     $name = $order->billing_first_name." ".$order->billing_last_name;
@@ -296,9 +295,11 @@
                             }); 
                             </script>
                         </form>';
-                    }else if($response["status"]==='iframe'){                        
-                        $ajaxurl = admin_url('admin-ajax.php');
-                        
+                    }else if($response["status"]==='iframe'){ 
+                    
+                    	$key =$response["data"]["key"];
+                        $access_key=$response["data"]["access_key"];                       
+                        $ajaxurl = admin_url('admin-ajax.php');                        
                         
                         return 
                         " <style>#loading {
@@ -458,7 +459,7 @@
                                             
                                         }else if($status=="pending"){
                                             $trans_authorised = true;
-                                            $this->msg['message'] = "Thank you for shopping with us. Right now your payment status is pending. We will keep you posted regarding the status of your order through eMail";
+                                            $this->msg['message'] = "Thank you for shopping with us. Right now your payment status is pending. We will keep you posted regarding the status of your order through Email";
                                             $this->msg['class'] = 'pending';
                                             $order->add_order_note('Easebuzz payment status is pending<br/>Easebuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
                                             $order->update_status('on-hold');
@@ -573,8 +574,6 @@ function payment_response_iframe(){
                     if($hash == $checkhash){
                         $status = strtolower($status);
                         if($status=="success"){
-                            $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$response['easepayid'].' ('.$response['txnid'].')<br/>PG: '.$response['PG_TYPE'].'<br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
-                            $woocommerce->cart->empty_cart();
                             $trans_authorised = true;
                             $return_response['message'] = "<strong>Thank you for shopping with us.Your transaction is successful.<br><br></strong>".
                             "<style>
@@ -657,7 +656,7 @@ function payment_response_iframe(){
                         }else if($status=="pending"){
                             $trans_authorised = true;
                             $woocommerce->cart->empty_cart();
-                            $return_response['message'] = "<strong>Thank you for shopping with us. Right now your payment status is pending. We will keep you posted regarding the status of your order through eMail</strong>".
+                            $return_response['message'] = "<strong>Thank you for shopping with us. Right now your payment status is pending. We will keep you posted regarding the status of your order through Email</strong>".
                             "<style>
                                 table, th, td {
                                     color: black;
