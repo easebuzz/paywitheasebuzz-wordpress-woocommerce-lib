@@ -120,7 +120,7 @@ class Payment {
         case 'test' :
             $this->url="https://testpay.easebuzz.in/";
             break;
-        case 'prod' :   
+        case 'prod' :
             $this->url = 'https://pay.easebuzz.in/';
             break;
         default :
