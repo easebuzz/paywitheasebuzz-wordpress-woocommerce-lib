@@ -1,15 +1,15 @@
 <?php
         
         /*
-        Plugin Name: Easebuzz Gateway
-        Plugin URI: https://pay.easebuzz.in/
-        Description: Easebuzz Payment Gateway Integration for WooCommerce
-        Version: 5.2.2
-        Developer : Rajesh Kushwaha
-        Author: Team Easebuzz 
-        Author URI: http://www.easebuzz.in/
-        License: GNU General Public License v3.0
-        License URI: http://www.gnu.org/licenses/gpl-3.0.html
+            Plugin Name: Easebuzz Gateway
+            Plugin URI: https://pay.easebuzz.in/
+            Description: Easebuzz Payment Gateway Integration for WooCommerce
+            Version: 5.5.6
+            Developer : Rajesh Kushwaha
+            Author: Team Easebuzz 
+            Author URI: http://www.easebuzz.in/
+            License: GNU General Public License v3.0
+            License URI: http://www.gnu.org/licenses/gpl-3.0.html
         */
         
 
@@ -35,14 +35,6 @@
                     // settings if gateway is on Test Mode
                     $test_title = '';
                     $test_description = '';
-                    // if ($this->settings['test_mode'] == 'test') {
-                    //     $test_title = ' [TEST MODE]';
-                    //     $test_description = '<br/><br/><u>Test Mode is <strong>ACTIVE</strong>, use following Credit Card details:-</u><br/>' . "\n"
-                    //     . 'Test Card Name: <strong><em>any name</em></strong><br/>' . "\n"
-                    //     . 'Test Card Number: <strong>5123 4567 8901 2346</strong><br/>' . "\n"
-                    //     . 'Test Card CVV: <strong>123</strong><br/>' . "\n"
-                    //     . 'Test Card Expiry: <strong>May 2017</strong>';
-                    // }
                     
                     $this->title = $this->settings['title'] . $test_title; // Title as displayed on Frontend
                     $this->description = $this->settings['description'] . $test_description; // Description as displayed on Frontend
@@ -83,7 +75,7 @@
                                             'title' => array(
                                                             'title' => __('Title:', 'woo_payeasebuzz'),
                                                             'type' => 'text',
-                                                            'default' => __('Pay Online (Upto 50% returns)', 'woo_payeasebuzz'),
+                                                            'default' => __('Easebuzz Payment Gateway', 'woo_payeasebuzz'),
                                                             'description' => __('This controls the title which the user sees during checkout.', 'woo_payeasebuzz'),
                                                             'placeholder' => __('Enter The Title'),
                                                             'desc_tip' => true
@@ -207,7 +199,7 @@
                 }
                 
                 /** Generate button link **/
-                function generate_payeasebuzz_form($order_id){
+                        function generate_payeasebuzz_form($order_id){
                     global $woocommerce;
                     $order = new WC_Order( $order_id );
                     // Redirect fail URL
@@ -233,74 +225,59 @@
                     }
                     
                     $productinfo = "Order $order_id";
-                    $txnid = $order_id.'_'.date("ymds");
                     if ($this->settings['test_mode'] == 'prod') {
                         $ENV='prod';
-                    }else{
+                    } else {
                         $ENV='test';
                     }
-                    $SALT=$this->settings['key_secret'];
-
-                    $OriginalString = $order->customer_note;   
                     
-                    $arr = explode(",",$OriginalString);
-                    $udf = array();
-                    for($a = 0;$a<6; $a++){
-                        $udf[$a] = $arr[$a]."";
-                    }
-
-                    $name = $order->billing_first_name." ".$order->billing_last_name;
-
+                    $SALT = trim($this->settings['key_secret']);
+                    
                     include( plugin_dir_path( __FILE__ ) . 'easepay-lib.php');
                     $payment_request_parameter = array(
-                        'key'           =>   $this->key_id,
-                        'txnid'         =>   $order->order_key,
-                        'amount'        =>   $order->order_total,
-                        'email'         =>   $order->billing_email,
-                        'firstname'     =>   preg_match('/^[a-zA-Z0-9\\-._ \()\/,\s]+$/', $name) ? $name : $order->add_order_note("The customer enter any special character in Name, which we does not allows.")."".$order->update_status('failed')."".die('<script>alert("We found special characters in Name.");document.write("<b>Please remove the special character from your Name and try again to complete you order.</b>");</script>'),
-                        'phone'         =>   preg_match('/^(\\+\\d{1,3}[-]?)?\\d{5,20}$/',$order->billing_phone) ? $order->billing_phone : $order->add_order_note("The customer enter wrong value for phone number.")."".$order->update_status('failed')."".die('<script>alert("You are passing wrong values for the phone number.");document.write("Please enter your correct phone number and try again to complete you order.");</script>'),
-                        'address1'      =>   preg_match('/^[a-zA-Z\\.0-9\/\\,\s_#@()&|:-]*$/',$order->billing_address_1) ? $order->billing_address_1 : $order->add_order_note("The customer enter any special character in address1, which is not allowed in Address.")."".$order->update_status('failed')."".die('<script>alert("You are passing special characters or symbols in address 1 field.");document.write("Please remove specail character or symbols from address1 and try again to complete you order.");</script>'),
-                        'address2'      =>   preg_match('/^[a-zA-Z\\.0-9\/\\,\s_#@()&|:-]*$/',$order->billing_address_2) ? $order->billing_address_2 : $order->add_order_note("The customer enter any special character in address2, which is not allowed in Address.")."".$order->update_status('failed')."".die('<script>alert("You are passing special characters or symbols in address 2 field.");document.write("Please remove specail character or symbols from address2 and try again to complete you order.");</script>'),
-                        'city'          =>   preg_match('/^[0-9a-zA-Z_.\s-]*$/',$order->billing_city) ? $order->billing_city : $order->add_order_note("The customer enter any special character in city, which is not allowed in City.")."".$order->update_status('failed')."".die('<script>alert("We found special characters in city field.");document.write("Please remove the specail character from city and try again to complete you order.");</script>'),
-                        'state'         =>   preg_match('/^[0-9a-zA-Z_.\s-]*$/',$order->billing_state) ? $order->billing_state : $order->add_order_note("The customer enter any special character in state, which is not allowed in State.")."".$order->update_status('failed')."".die('<script>alert("There is any special character in state.");document.write("Please remove special character from state field and try again to complete you order.");</script>'),
-                        'country'       =>   preg_match('/^[a-zA-Z_.\s-]*$/',$order->billing_country) ? $order->billing_country : $order->add_order_note("The customer enter any special character in country, which is not allowed in country.")."".$order->update_status('failed')."".die('<script>alert("Please select correct country name.");document.write("Please select correct country.");</script>'),
-                        'zipcode'       =>   preg_match('/^[0-9]{0,6}$/',$order->billing_postcode) ? $order->billing_postcode : $order->add_order_note("The customer enter any special character or invalid zipcode, which is not allowed in zipcode.")."".$order->update_status('failed')."".die('<script>alert("Invalid zip code.");document.write("Please enter correct the zipcode.");</script>'),
-                        'udf1'          =>   $order_id,
-                        'udf2'          =>   $udf[0],
-                        'udf3'          =>   $udf[1],
-                        'udf4'          =>   $udf[2],
-                        'udf5'          =>   $udf[3],
-                        'udf6'          =>   $udf[4],
-                        'udf7'          =>   $udf[5],
-                        'productinfo'   =>   $productinfo,
-                        'surl'          =>   $redirect_url,
-                        'furl'          =>   $redirect_fail_url
+                        'key' => trim($this->key_id),
+                        'txnid' => trim($order_id.'-'.date("Hymisd").rand()),
+                        'amount' => trim($order->order_total),
+                        'firstname' => trim($order->get_billing_first_name()." ".$order->get_billing_last_name()),
+                        'email' =>  trim($order->get_billing_email()),
+                        'phone' =>  trim($order->get_billing_phone()),
+                        'udf1' => trim($order_id),
+                        'udf2' => trim($order->order_key),
+                        'productinfo' => trim($productinfo),
+                        'surl' =>  trim($redirect_url),
+                        'furl' =>  trim($redirect_fail_url),
                     );
+
                     $response = easepay_page($payment_request_parameter, $SALT, $ENV);
                     if($response["status"]===1){
-                        return '<script type="text/javascript">
-                        jQuery(function(){
-                            jQuery("body").block({
-                                message: "'.__('Thank you for your order. We are now redirecting you to Payment Gateway to make payment.', 'woo_payeasebuzz').'",
-                                overlayCSS: {
-                                background	: "#fff",
-                                opacity	: 0.6
-                                },
-                                css: {
-                                padding	: 20,
-                                textAlign	: "center",
-                                color	: "#555",
-                                border	: "3px solid #aaa",
-                                backgroundColor: "#fff",
-                                cursor	: "wait",
-                                lineHeight	: "32px"
-                                }
-                                });
+                        
+                        // First Way Payment
+                        header('Location:' . $response["data"]);
+                        
+                        // Second Way Payment
+                        // return '<script type="text/javascript">
+                        // jQuery(function(){
+                        //     jQuery("body").block({
+                        //         message: "'.__('Thank you for your order. We are now redirecting you to Payment Gateway to make payment.', 'woo_payeasebuzz').'",
+                        //         overlayCSS: {
+                        //         background	: "#fff",
+                        //         opacity	: 0.6
+                        //         },
+                        //         css: {
+                        //             padding	: 20,
+                        //             textAlign	: "center",
+                        //             color	: "#555",
+                        //             border	: "3px solid #aaa",
+                        //             backgroundColor: "#fff",
+                        //             cursor	: "wait",
+                        //             lineHeight	: "32px"
+                        //             }
+                        //         });
                                 
-                                window.location="'.$response["data"].'";
-                            });
-                            </script>
-                        </form>';
+                        //         window.location="'.$response["data"].'";
+                        //     });
+                        //     </script>
+                        // </form>';
                     }
                     else if($response["status"]==='iframe'){
                         $key =$response["data"]["key"];
@@ -318,17 +295,16 @@
                             z-index: 9999999;
                             background-size:100px;
                         }</style>
-                        <script src='https://ebz-static.s3.ap-south-1.amazonaws.com/easecheckout/easebuzz-checkout.js'></script>
+                        <script src='https://ebz-static.s3.ap-south-1.amazonaws.com/easecheckout/v2.0.0/easebuzz-checkout-v2.min.js'></script>
                         <script type='text/javascript'>
                             jQuery(function(){
                                 jQuery('.entry-content').append('<div id=loading></div>');
-                                var easebuzzCheckout = new EasebuzzCheckout('". $key ."','prod')
+                                var easebuzzCheckout = new EasebuzzCheckout('". $key ."','$ENV')
 
                             jQuery( '#ebz-checkout-btn' ).on( 'click', function( e ) {
                                 var options = {
                                 access_key: '".$access_key."' , // access key received via Initiate Payment
                                 onResponse: (response_data) => {
-                                console.log(response_data);
                                 jQuery('#loading').show();
                                     jQuery.ajax({
                                         type : 'post',
@@ -365,26 +341,28 @@
                         return '<script type="text/javascript">
                         jQuery(function(){
                             jQuery("body").block({
-                                    message: "'.__('Oops, Server error, Please try again. '.$response["data"], 'woo_payeasebuzz').'",
+                                    message: "'.__('Oops, Server error, Please try again. \n'.$response["data"], 'woo_payeasebuzz').'",
                                     overlayCSS: {
                                         background	: "#fff",
-                                        opacity	: 0.6
+                                        opacity	: 0.8
                                         },
                                     css: {
-                                        padding	: 20,
-                                        textAlign	: "center",
-                                        color	: "#555",
+                                        padding	: 30,
+                                        textAlign : "center",
+                                        color	: "#666",
                                         border	: "3px solid #aaa",
                                         backgroundColor: "#fff",
                                         cursor	: "wait",
-                                        lineHeight	: "32px"
+                                        lineHeight	: "normal",
+                                        margin: "auto", 
+                                        width: "320px", 
                                         }
                                     });
                                 });
                         </script>
                         </form>';
                     }
-                    
+                                        
                 }
                 /** Process the payment and return the result **/
                 function process_payment($order_id){
@@ -451,34 +429,40 @@
                                             $this->msg['message'] = "Thank you for shopping with us. Your account has been charged and your transaction is successful.";
                                             $this->msg['class'] = 'success';
                                             if($order->status == 'processing'){
-                                                $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
+                                                $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$_REQUEST['easepayid'].'<br/> Transaction ID:'.$_REQUEST['txnid'].' <br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
                                                 $woocommerce->cart->empty_cart();
-                                            }else{
+                                            } else {
                                                 $order->payment_complete();
-                                                $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
+                                                $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$_REQUEST['easepayid'].' <br/> Transaction ID:'.$_REQUEST['txnid'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
                                                 $woocommerce->cart->empty_cart();
-                                                
                                             }
                                             $this->redirectUser($order);
-                                            //$redirect_new_url = $redirect_url;
-                                            
-                                        }else if($status=="pending"){
+                                            // $redirect_new_url = $redirect_url;
+                                        } else if($status == "pending") {
                                             $trans_authorised = true;
                                             $this->msg['message'] = "Thank you for shopping with us. Right now your payment status is pending. We will keep you posted regarding the status of your order through eMail";
                                             $this->msg['class'] = 'pending';
-                                            $order->add_order_note('Easebuzz payment status is pending<br/>Easebuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
-                                            $order->update_status('on-hold');
-                                            $woocommerce -> cart -> empty_cart();
-                                            //$redirect_new_url = $redirect_url;
-                                            $this->redirectUser($order);
-                                        }else{
+                                            $order->add_order_note('Easebuzz payment status is pending<br/>Easebuzz ID: '.$_REQUEST['easepayid'].' <br/> Transaction ID:'.$_REQUEST['txnid'].' <br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
+                                            $order->update_status('pending payment');
+                                            $woocommerce->cart->empty_cart();
+                                            $redirect_new_url = $redirect_url;
+                                            // $this->redirectUser($order);
+                                        } else if($status == "usercancelled") {
+                                            $trans_authorised = true;
+                                            $this->msg['message'] = "Thank you for shopping with us. You have canceled the transaction. ";
+                                            $this->msg['class'] = 'pending';
+                                            $order->add_order_note('Easebuzz payment status is userCancelled<br/>Easebuzz ID: '.$_REQUEST['easepayid'].' <br/> Transaction ID:'.$_REQUEST['txnid'].' <br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
+                                            $order->update_status('cancelled');
+                                            $redirect_new_url = $redirect_url;
+                                            // $this->redirectUser($order);
+                                        } else {
                                             $this->msg['class'] = 'error';
                                             $this->msg['message'] = "Oops, the transaction has been failed. Please try again";
-                                            $order->add_order_note('Transaction ERROR: '.$_REQUEST['error'].'<br/>Easebuzz ID: '.$_REQUEST['easepayid'].' ('.$_REQUEST['txnid'].')<br/>PG: '.$_REQUEST['PG_TYPE'].'<br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
-                                            //$redirect_new_url = $redirect_fail_url;
-                                            $this->redirectUser($order);
+                                            $order->add_order_note('Transaction Status: '.$status.'<br/>Easebuzz ID: '.$_REQUEST['easepayid'].' <br/> Transaction ID:'.$_REQUEST['txnid'].' <br/>Bank Ref: '.$_REQUEST['bank_ref_num'].'('.$_REQUEST['mode'].')');
+                                            $redirect_new_url = $redirect_fail_url;
+                                            // $this->redirectUser($order);
                                         }
-                                    }else{
+                                    } else {
                                         $this->msg['class'] = 'error';
                                         $this->msg['message'] = "Security Error. Illegal access detected.";
                                         $order->add_order_note('Checksum ERROR: '.json_encode($_REQUEST));
@@ -488,7 +472,7 @@
                                         $order->update_status('failed');
                                     }
                                 }else{
-                                // $redirect_new_url = $redirect_fail_url;
+                                    $redirect_new_url = $redirect_fail_url;
                                 }
                                 
                                 if ( function_exists( 'wc_add_notice' ) )
@@ -577,8 +561,9 @@ function payment_response_iframe(){
                     if($hash == $checkhash){
                         $status = strtolower($status);
                         if($status=="success"){
-                            $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$response['easepayid'].' ('.$response['txnid'].')<br/>PG: '.$response['PG_TYPE'].'<br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
+                            $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$response['easepayid'].' <br/> Transaction ID:'.$response['txnid'].'<br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
                             $woocommerce->cart->empty_cart();
+
                             $trans_authorised = true;
                             $return_response['message'] = "<strong>Thank you for shopping with us.Your transaction is successful.<br><br></strong>".
                             "<style>
@@ -651,11 +636,11 @@ function payment_response_iframe(){
                             </table>";
                             $return_response['class'] = 'success';
                             if($order->status == 'processing'){
-                                $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$response['easepayid'].' ('.$response['txnid'].')<br/>PG: '.$response['PG_TYPE'].'<br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
+                                $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$response['easepayid'].' <br/> Transaction ID:'.$response['txnid'].' <br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
                                 $woocommerce->cart->empty_cart();
                             }else{
                                 $order->payment_complete();
-                                $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$response['easepayid'].' ('.$response['txnid'].')<br/>PG: '.$response['PG_TYPE'].'<br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
+                                $order->add_order_note('Easebuzz payment successful.<br/>Easbeuzz ID: '.$response['easepayid'].' <br/> Transaction ID:'.$response['txnid'].' <br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
                                 $woocommerce->cart->empty_cart(); 
                             }
                         }else if($status=="pending"){
@@ -730,9 +715,10 @@ function payment_response_iframe(){
                                     </tr>
                             </table>";
                             $return_response['class'] = 'pending';
-                            $order->add_order_note('Easebuzz payment status is pending<br/>Easebuzz ID: '.$response['easepayid'].' ('.$response['txnid'].')<br/>PG: '.$response['PG_TYPE'].'<br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
-                            $order->update_status('on-hold');
-                            $woocommerce -> cart -> empty_cart();
+                            $order->add_order_note('Easebuzz payment status is pending<br/>Easebuzz ID: '.$response['easepayid'].' <br/> Transaction ID:'.$response['txnid'].' <br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
+                            $order->update_status('pending payment');
+                            $woocommerce->cart->empty_cart();
+                            
                             
                         }else{  
                             $return_response['class'] = 'error';
@@ -802,7 +788,7 @@ function payment_response_iframe(){
                                         <td>$order->billing_email</td>
                                     </tr>
                             </table>";
-                            $order->add_order_note('Transaction ERROR: '.$response['error'].'<br/>Easebuzz ID: '.$response['easepayid'].' ('.$response['txnid'].')<br/>PG: '.$response['PG_TYPE'].'<br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
+                            $order->add_order_note('Transaction ERROR: '.$response['error'].'<br/>Easebuzz ID: '.$response['easepayid'].' <br/> Transaction ID:'.$response['txnid'].' <br/>Bank Ref: '.$response['bank_ref_num'].'('.$response['mode'].')');
                         }
                     }else{
                         $return_response['class'] = 'error';

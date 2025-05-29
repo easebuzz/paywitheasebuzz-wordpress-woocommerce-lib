@@ -270,7 +270,7 @@ class Misc {
             if($res->status==1){
                 return array ( 'curl_status' => Misc::SUCCESS, 'result' => $res->data );
             }else{
-                return array ( 'curl_status' => Misc::FAILURE, 'error' => $res->data );
+                return array ( 'curl_status' => Misc::FAILURE, 'error' => $res->error_desc );
             }
 		
 	}
