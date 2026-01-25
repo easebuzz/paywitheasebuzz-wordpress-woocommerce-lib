@@ -234,19 +234,35 @@
                     $SALT = trim($this->settings['key_secret']);
                     
                     include( plugin_dir_path( __FILE__ ) . 'easepay-lib.php');
-                    $payment_request_parameter = array(
-                        'key' => trim($this->key_id),
-                        'txnid' => trim($order_id.'-'.date("Hymisd").rand()),
-                        'amount' => trim($order->order_total),
-                        'firstname' => trim($order->get_billing_first_name()." ".$order->get_billing_last_name()),
-                        'email' =>  trim($order->get_billing_email()),
-                        'phone' =>  trim($order->get_billing_phone()),
-                        'udf1' => trim($order_id),
-                        'udf2' => trim($order->order_key),
-                        'productinfo' => trim($productinfo),
-                        'surl' =>  trim($redirect_url),
-                        'furl' =>  trim($redirect_fail_url),
-                    );
+                   $store_currency = get_woocommerce_currency();
+$order_total = (float) $order->order_total;
+
+$conversion_rates = array(
+    'USD' => 92,
+    'EUR' => 100,
+    'GBP' => 115,
+    'AUD' => 60,
+    'CAD' => 68,
+    'INR' => 1
+);
+
+$amount_in_inr = isset($conversion_rates[$store_currency])
+    ? round($order_total * $conversion_rates[$store_currency], 2)
+    : round($order_total, 2);
+
+$payment_request_parameter = array(
+    'key' => trim($this->key_id),
+    'txnid' => trim($order_id.'-'.date("Hymisd").rand()),
+    'amount' => trim($amount_in_inr),
+    'firstname' => trim($order->get_billing_first_name()." ".$order->get_billing_last_name()),
+    'email' => trim($order->get_billing_email()),
+    'phone' => trim($order->get_billing_phone()),
+    'udf1' => trim($order_id),
+    'udf2' => trim($order->order_key),
+    'productinfo' => trim("Order $order_id"),
+    'surl' => trim($redirect_url),
+    'furl' => trim($redirect_fail_url),
+);
 
                     $response = easepay_page($payment_request_parameter, $SALT, $ENV);
                     if($response["status"]===1){
