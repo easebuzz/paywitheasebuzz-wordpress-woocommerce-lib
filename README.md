@@ -1,17 +1,22 @@
-woocommerce integration plugin for pay with easebuzz pay.easebuzz.in
+# WooCommerce Easebuzz Payment Gateway Plugin
 
-steps: 
-1. Download paywitheasebuzz-wordpress-woocommerce-lib-master from below link.
-2. Extract woocommerce-easebuzz-gateway.zip from master folder.
-3. Login to admin.
-4. Install woocommerce-easebuzz-gateway.zip in the plugins.
-5. Go to installed plugins.
-6. Enable Easebuzz.
-7. Add Key, Salt and Environment. (Keep SURL & FURL "Checkout" page).
+WooCommerce integration plugin for pay with Easebuzz (pay.easebuzz.in)
 
+## Installation Steps
+
+1. Download this repository as a ZIP from the GitHub repo link provided.
+2. Inside the repository, you will find `woocommerce_easebuzz_plugin.zip`.
+3. Login to your WordPress admin panel.
+4. Go to **Plugins → Add New → Upload Plugin**.
+5. Upload `woocommerce_easebuzz_plugin.zip` directly and click **Install Now**.
+6. Go to **Installed Plugins** and enable **Easebuzz**.
+7. Configure the plugin settings:
+   - Add your **Key**, **Salt**, and select the **Mode** (Test/Production).
+   - If you are using the **iframe** integration, enable the **iframe** option in the plugin settings.
+
+## Webhook Configuration
 
 Kindly follow the steps below to configure the webhook URL to auto-sync the order status.
 
-1. set the salt value in the update_webhook.php file.
-2. copy the current path of the same file like: https://easebuzzshop.in/wp-content/plugins/woocommerce_easebuzz_plugin/update_webhook.php
-3. To configure the URL in the EaseBuzz dashboard, follow the path: Login to EaseBuzz Payment Gateway ----> Account Settings ---> Webhook ---> Transaction Webhook.
+1. Copy the webhook file path like: `https://yourdomain.com/wp-content/plugins/woocommerce_easebuzz_plugin/update_webhook.php`
+2. To configure the URL in the Easebuzz dashboard, follow the path and enable the same: **Login to Easebuzz Payment Gateway → Product Settings → Webhook → Transaction Webhook**.
