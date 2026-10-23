@@ -30,7 +30,7 @@ Kindly follow the steps below to configure the webhook URL to auto-sync the orde
 
 - WordPress 6.5+
 - WooCommerce 8.2+ (required for High-Performance Order Storage support)
-- PHP 7.4+
+- PHP 8.2+ (patched to 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12 or later
 
 ## Features
 
